@@ -5,7 +5,7 @@
 #include "parser.h"
 
 int main(int a, char **b) {
-	char* file_name = "chpn_op25_e12.mid";
+	char* file_name = "Files/chpn_op25_e12.mid";
 	midi_struct song;
 
 	parse(file_name, &song);

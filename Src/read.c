@@ -27,9 +27,3 @@ read_short(FILE* file)
 	}
 	return res;
 }
-
-char*
-read_data(FILE* file)
-{
-	return NULL;
-}

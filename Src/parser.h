@@ -11,5 +11,6 @@ unsigned char* parse_meta_event(unsigned char* data, event_struct *res);
 
 int write(const midi_struct* song, const char* file_name);
 void destroy(midi_struct* mid);
+unsigned char* read_vlv(unsigned char* stream, int *res);
 
 #endif // _PARSER_H_

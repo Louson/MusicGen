@@ -96,26 +96,51 @@ parse_event(unsigned char* data, event_struct *res)
 	unsigned char *c = data;
 
 	/* delta_time */
-	int delta_time = *c;
-	c++;
-	if (delta_time > 128) { // 0x80
-		delta_time = (delta_time << 8) + *c;
-		c++;
-	}
-	res->delta_time = delta_time;
+	c = read_vlv(data, &(res->delta_time));
 
 	if ( *c == 255 ) { // Meta event
 		return parse_meta_event(c+1, res);
 	} else if ( *c == 240 || *c == 247 ) {
 		puts("SYSTEM EVENT");
 	}
+	printf("%x\n", *c);
 	res->type = *c >> 4; // first 4 bits
 	res->channel = *c & 15; // last 4 bits
 	c++;
 
-	res->p1 = *c; c++;
-	res->p2 = *c; c++;
-
+	switch(res->type) {
+	case 8:
+		res->p1 = *c; c++;
+		res->p2 = *c; c++;
+		break;
+	case 9:
+		res->p1 = *c; c++;
+		res->p2 = *c; c++;
+		break;
+	case 10:
+		res->p1 = *c; c++;
+		res->p2 = *c; c++;
+		break;
+	case 11:
+		res->p1 = *c; c++;
+		res->p2 = *c; c++;
+		break;
+	case 12:
+		res->p1 = *c; c++;
+		break;
+	case 13:
+		res->p1 = *c; c++;
+		break;
+	case 14:
+		res->p1 = *c; c++;
+		res->p2 = *c; c++;
+		break;
+	default:
+		printf("Uncorrect event type: %d\n", res->type);
+		assert(0);
+		break;
+	}
+	
 	return c;
 }
 
@@ -227,4 +252,17 @@ destroy(midi_struct *mid)
 {
 	free(mid->tracks);
 	free(mid->head);
+}
+
+
+unsigned char*
+read_vlv(unsigned char* stream, int* res)
+{
+	unsigned char *c = stream;;
+	*res = *c & 127; // 0b 0111 1111
+	while ( *c >> 7 ) { // first bit
+		c++;
+		*res = (*res << 7) + (*c & 127);
+	}
+	return c+1;
 }
